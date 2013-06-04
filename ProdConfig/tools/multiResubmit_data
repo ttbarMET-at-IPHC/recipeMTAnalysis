@@ -1,0 +1,58 @@
+#!/bin/bash
+
+TASKS="Elec_A Elec_Arecover Elec_B Elec_C1 Elec_C2 Elec_D Muon_A Muon_Arecover Muon_B Muon_C1 Muon_C2 Muon_D"
+
+for TASK in $TASKS
+do
+    echo " ================================="
+    echo "  Checking status of $TASK ...    "
+    
+    crab -status -c $TASK > status.tmp 2>&1
+
+    MERGEDLIST=""
+    
+    LISTS=`cat status.tmp | grep -v "Exit Code : 0" | grep -b1 "Exit Code :" | grep "List of jobs:" | awk '{print $5}'`
+    for LIST in $LISTS
+    do
+        MERGEDLIST=$LIST,$MERGEDLIST
+    done
+
+    LISTS=`cat status.tmp | grep -b2 "Jobs Aborted" | grep "List of jobs:" | awk '{print $5}'`
+    for LIST in $LISTS
+    do
+        MERGEDLIST=$LIST,$MERGEDLIST
+    done
+    
+#    LISTS=`cat status.tmp | grep "List of jobs Ready:" | awk '{print $5}'`
+#    for LIST in $LISTS
+#    do
+#        MERGEDLIST=$LIST,$MERGEDLIST
+#    done
+
+#   LISTS=`cat status.tmp | grep "List of jobs Submitted:" | awk '{print $5}'`
+#   for LIST in $LISTS
+#   do
+#   MERGEDLIST=$LIST,$MERGEDLIST
+#   done
+
+#   LISTS=`cat status.tmp | grep "List of jobs Scheduled:" | awk '{print $5}'`
+#   for LIST in $LISTS
+#   do
+#   MERGEDLIST=$LIST,$MERGEDLIST
+#   done
+
+
+    if [[ $MERGEDLIST == "" ]]
+    then
+        echo "  No job to resubmit        "
+    else
+        #echo "# Will resubmit $MERGEDLIST"
+        NRESUBMITTED=`crab -forceResubmit $MERGEDLIST -c $TASK | grep "Total of" | awk '{print $4}'`
+        echo "  Resubmitted $NRESUBMITTED jobs"
+    fi
+
+done
+    
+echo " ================================="
+rm status.tmp
+ 

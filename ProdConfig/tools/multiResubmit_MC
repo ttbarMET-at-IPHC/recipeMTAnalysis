@@ -1,0 +1,58 @@
+#!/bin/bash
+
+TASKS="DY4Jets DYJets Singletop_Tbar_s Singletop_Tbar_t Singletop_Tbar_tW Singletop_T_s Singletop_T_t Singletop_T_tW TBZToLL ttbarFullLept ttbarHadronic ttbarSemiLept TTGJets TTWJets TTWWJets TTZJets W2Jets W3Jets W4Jets WGstarToLNu2E WGstarToLNu2Mu WGstarToLNu2Tau WWGJets WWJetsTo2L2Nu WWWJets WWZNoGstarJets WZJetsTo2L2Q WZJetsTo3LNu WZZNoGstarJets ZZJetsTo2L2Nu ZZJetsTo2L2Q ZZJetsTo4L ZZZNoGstarJets"
+
+#TASKS="ttbarHadronic"
+
+for TASK in $TASKS
+do
+    echo " ================================="
+    echo "  Checking status of $TASK ...    "
+    
+    crab -status -c $TASK > status.tmp 2>&1
+
+    MERGEDLIST=""
+    
+    LISTS=`cat status.tmp | grep -v "Exit Code : 0" | grep -b1 "Exit Code :" | grep "List of jobs:" | awk '{print $5}'`
+    for LIST in $LISTS
+    do
+        MERGEDLIST=$LIST,$MERGEDLIST
+    done
+
+    LISTS=`cat status.tmp | grep -b2 "Jobs Aborted" | grep "List of jobs:" | awk '{print $5}'`
+    for LIST in $LISTS
+    do
+        MERGEDLIST=$LIST,$MERGEDLIST
+    done
+
+    LISTS=`cat status.tmp | grep "List of jobs Ready:" | awk '{print $5}'`
+    for LIST in $LISTS
+    do
+        MERGEDLIST=$LIST,$MERGEDLIST
+    done
+#
+#    LISTS=`cat status.tmp | grep "List of jobs Submitted:" | awk '{print $5}'`
+#    for LIST in $LISTS
+#    do
+#        MERGEDLIST=$LIST,$MERGEDLIST
+#    done
+#
+#    LISTS=`cat status.tmp | grep "List of jobs Scheduled:" | awk '{print $5}'`
+#    for LIST in $LISTS
+#    do
+#        MERGEDLIST=$LIST,$MERGEDLIST
+#    done
+#
+    if [[ $MERGEDLIST == "" ]]
+    then
+        echo "  No job to resubmit        "
+    else
+        #echo "# Will resubmit $MERGEDLIST"
+        NRESUBMITTED=`crab -forceResubmit $MERGEDLIST -c $TASK | grep "Total of" | awk '{print $4}'`
+        echo "  Resubmitted $NRESUBMITTED jobs"
+    fi
+
+done
+    
+echo " ================================="
+rm status.tmp

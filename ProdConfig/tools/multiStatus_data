@@ -1,0 +1,70 @@
+#!/bin/bash
+
+TASKS="Elec_A Elec_Arecover Elec_B Elec_C1 Elec_C2 Elec_D Muon_A Muon_Arecover Muon_B Muon_C1 Muon_C2 Muon_D"
+
+rm -f report.tmp
+
+echo ", ----------------- - --------- - ----------- - --------- - ------------------ - -------------- - --------- ," >> report.tmp
+echo "|        Task       | Submitted |  Scheduled  |  Running  |  Success_(Cleared)  |  Error/Others  |   Total   |" >> report.tmp
+echo "- ----------------- - --------- - ----------- - --------- - ------------------ - -------------- - --------- -" >> report.tmp
+
+ALL_SUBMITTED=0
+ALL_SCHEDULED=0
+ALL_RUNNING=0
+ALL_SUCCESS=0
+ALL_CLEARED=0
+ALL_ERROR=0
+ALL_TOTAL=0
+
+for TASK in $TASKS
+do
+    echo "  Checking status of $TASK ...    "
+    
+    crab -status -c $TASK > status.tmp 2>&1
+
+    SUBMITTED=`cat status.tmp | grep "Jobs Submitted"`
+    if [[ $SUBMITTED != "" ]]; then SUBMITTED=`echo $SUBMITTED | awk '{print $2}'`; else SUBMITTED=0; fi
+    SCHEDULED=`cat status.tmp | grep "Jobs Scheduled"`
+    if [[ $SCHEDULED != "" ]]; then SCHEDULED=`echo $SCHEDULED | awk '{print $2}'`; else SCHEDULED=0; fi
+    RUNNING=`cat status.tmp | grep "Jobs Running"`
+    if [[ $RUNNING != "" ]]; then RUNNING=`echo $RUNNING | awk '{print $2}'`; else RUNNING=0; fi
+    SUCCESS=`cat status.tmp | grep "Exit Code : 0"`
+    if [[ $SUCCESS != "" ]]; then SUCCESS=`echo $SUCCESS | awk '{print $2}'`; else SUCCESS=0; fi
+    TOTAL=`cat status.tmp | grep "Total Jobs"`
+    if [[ $TOTAL != "" ]]; then TOTAL=`echo $TOTAL | awk '{print $2}'`; else TOTAL=0; fi
+    CLEARED=`cat status.tmp | grep "Jobs Cleared"`
+    if [[ $CLEARED != "" ]]; then CLEARED=`echo $CLEARED | awk '{print $2}'`; else CLEARED=0; fi
+    ERROR=`echo $TOTAL - $SUCCESS - $RUNNING - $SCHEDULED - $SUBMITTED | bc`
+
+    echo "| $TASK | $SUBMITTED | $SCHEDULED | $RUNNING | ${SUCCESS}_(${CLEARED}) | $ERROR | $TOTAL |" >> report.tmp
+
+    ALL_SUBMITTED=`echo $ALL_SUBMITTED + $SUBMITTED | bc`
+    ALL_SCHEDULED=`echo $ALL_SCHEDULED + $SCHEDULED | bc`
+    ALL_RUNNING=`echo $ALL_RUNNING + $RUNNING | bc`
+    ALL_SUCCESS=`echo $ALL_SUCCESS + $SUCCESS | bc`
+    ALL_CLEARED=`echo $ALL_CLEARED + $CLEARED | bc`
+    ALL_ERROR=`echo $ALL_ERROR + $ERROR | bc`
+    ALL_TOTAL=`echo $ALL_TOTAL + $TOTAL | bc`
+
+done
+
+echo "- ----------------- - --------- - ----------- - --------- - ------------------ - -------------- - --------- -" >> report.tmp
+
+echo "| All | $ALL_SUBMITTED | $ALL_SCHEDULED | $ALL_RUNNING | ${ALL_SUCCESS}_(${ALL_CLEARED}) | $ALL_ERROR | $ALL_TOTAL |" >> report.tmp
+
+ALL_SUBMITTED=`echo $ALL_SUBMITTED "*" 100 / $ALL_TOTAL | bc`
+ALL_SCHEDULED=`echo $ALL_SCHEDULED "*" 100 / $ALL_TOTAL | bc`
+ALL_RUNNING=`echo $ALL_RUNNING "*" 100 / $ALL_TOTAL | bc`
+ALL_SUCCESS=`echo $ALL_SUCCESS "*" 100 / $ALL_TOTAL | bc`
+ALL_CLEARED=`echo $ALL_CLEARED "*" 100 / $ALL_TOTAL | bc`
+ALL_ERROR=`echo $ALL_ERROR "*" 100 / $ALL_TOTAL | bc`
+ALL_TOTAL=`echo $ALL_TOTAL "*" 100 / $ALL_TOTAL | bc`
+
+echo "| All(percent) | ${ALL_SUBMITTED}% | ${ALL_SCHEDULED}% | ${ALL_RUNNING}% | ${ALL_SUCCESS}%_(${ALL_CLEARED}%) | ${ALL_ERROR}% | ${ALL_TOTAL}% |" >> report.tmp
+
+echo "- ----------------- - --------- - ----------- - --------- - ------------------ - -------------- - --------- -" >> report.tmp
+   
+cat report.tmp | column -t
+
+rm status.tmp
+rm report.tmp
