@@ -11,7 +11,7 @@ echo " "
 echo "> Installing IPHC framework"
 echo " "
 
-cmsenv CMSSW_5_3_2_patch4
+cmsrel CMSSW_5_3_2_patch4
 cd CMSSW_5_3_2_patch4/src
 cmsenv
 
