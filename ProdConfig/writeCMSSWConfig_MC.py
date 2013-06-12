@@ -1174,6 +1174,7 @@ file.write('# END    TRACEABILITY - TRACEABILITY - TRACEABILITY - TRACEABILITY  
 file.write('# ---------------------------------------------------------------------------\n')
 file.write('\n')
 conf = conf.replace('traceability = cms.vstring()','traceability = cms.vstring(Traceability)')
+conf = conf.replace('process.None+','')
 
 file.write(conf)
 

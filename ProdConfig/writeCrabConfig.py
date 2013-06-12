@@ -61,8 +61,9 @@ def Execute():
     output.close()
 
 # Check number of arguments
-if len(sys.argv)<1:
+if len(sys.argv)<2:
     print "Error : wrong number of arguments"
+    print "  > Syntax : python writeCrabConfig.py [MCbkg|data]"
 else:
     Execute()
 
