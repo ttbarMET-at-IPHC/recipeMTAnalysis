@@ -2,8 +2,8 @@
 
 echo " "
 echo "##############################################"
-echo "#   Installer will setup CMSSW 532patch4     #"
-echo "#  and the different packages from UserCode  #"
+echo "# This installer assume your current working #"
+echo "#        directory is CMSSW 532patch4        #"
 echo "##############################################"
 echo " "
 
@@ -11,14 +11,12 @@ echo " "
 echo "> Installing IPHC framework"
 echo " "
 
-cmsrel CMSSW_5_3_2_patch4
-cd CMSSW_5_3_2_patch4/src
-cmsenv
+git clone https://github.com/ttbarMET-at-IPHC/IPHCFramework.git
 
-mv ../../IPHCDataFormat ./
-mv ../../MiniTree ./
-mv ../../NTuple ./
-mv ../../ProdConfig ./
+mv IPHCFramework/IPHCDataFormat ./
+mv IPHCFramework/MiniTree ./
+mv IPHCFramework/NTuple ./
+rm -r IPHCFramework
 
 echo " "
 echo "> Installing CMSSW packages"
