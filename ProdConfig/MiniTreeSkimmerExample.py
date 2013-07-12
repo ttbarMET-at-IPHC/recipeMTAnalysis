@@ -1,5 +1,4 @@
 
-
 process.MiniTreeSkimming = cms.EDFilter('MiniTreeSkimmer',
 
         verbose             = cms.uint32(3), 
@@ -24,3 +23,4 @@ process.MiniTreeSkimming = cms.EDFilter('MiniTreeSkimmer',
 
 # Don't forget to add the filter in the path (process.p)
 
+# And DONT'T **** FORGET to add 'keep *_MiniTreeSkimming_*_*' (in the out.outputCommands) !!
