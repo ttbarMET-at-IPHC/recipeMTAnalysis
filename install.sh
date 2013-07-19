@@ -49,7 +49,7 @@ addpkg RecoEgamma/ElectronIdentification  V00-03-31
 addpkg RecoJets/JetAnalyzers  		V00-07-02-03
 addpkg RecoJets/JetProducers  		V05-10-02
 addpkg RecoMET/METAnalyzers  		V00-00-08
-addpkg RecoMET/METFilters  			V00-00-10
+addpkg RecoMET/METFilters           V00-00-13-01
 addpkg RecoParticleFlow/PFProducer  V15-01-11
 
 #cvs co -r V00-00-30 -d EGamma/EGammaAnalysisTools UserCode/EGamma/EGammaAnalysisTools/
@@ -61,7 +61,17 @@ cvs up -r 1.52.10.4 PhysicsTools/PatAlgos/python/tools/tauTools.py
 cvs co -r V01-04-23 RecoTauTag/RecoTau
 cvs co -r V01-04-10 RecoTauTag/Configuration
 
+# PU-jet ID
 cvs co -r V00-03-01 -d CMGTools/External UserCode/CMG/CMGTools/External
+
+# CA8 jet collection
+cvs co -r HEAD -d ./ExoDiBosonResonances/PATtupleProduction UserCode/ExoDiBosonResonances/PATtupleProduction 
+
+# Quark-gluon tagging
+git clone git@github.com:amarini/QuarkGluonTagger.git
+cd QuarkGluonTagger
+git checkout v1-2-5
+cd ..
 
 echo " "
 echo "> Launching compilation of CMSSW packages"
