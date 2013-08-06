@@ -9,13 +9,6 @@
 # Starting with a skeleton process which gets imported with the following line
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-#-- Meta data to be logged in DBS ---------------------------------------------
-process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.3 $'),
-    name = cms.untracked.string('$Source: /local/reps/CMSSW/UserCode/TTbarMETIPHC/Alex/ProdConfig/writeCMSSWConfig_MC.py,v $'),
-    annotation = cms.untracked.string('SUSY pattuple definition')
-)
-
 #-- Message Logger ------------------------------------------------------------
 process.MessageLogger.categories.append('PATSummaryTables')
 process.MessageLogger.cerr.PATSummaryTables = cms.untracked.PSet(
