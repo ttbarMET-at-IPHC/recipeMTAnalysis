@@ -508,7 +508,7 @@ process.source = cms.Source("PoolSource",
 #############
 
 # For MC
-process.GlobalTag.globaltag = cms.string('START53_V7E::All')
+process.GlobalTag.globaltag = cms.string('START53_V7G::All')
 
 # For data
 #process.GlobalTag.globaltag = cms.string('GR_R_52_V9::All')
