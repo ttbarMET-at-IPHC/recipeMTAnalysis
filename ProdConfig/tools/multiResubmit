@@ -1,52 +1,19 @@
 #!/bin/bash
 
-TASKS="DY4Jets DYJets Singletop_Tbar_s Singletop_Tbar_t Singletop_Tbar_tW Singletop_T_s Singletop_T_t Singletop_T_tW TBZToLL ttbarFullLept ttbarHadronic ttbarSemiLept TTGJets TTWJets TTWWJets TTZJets W2Jets W3Jets W4Jets WGstarToLNu2E WGstarToLNu2Mu WGstarToLNu2Tau WWGJets WWJetsTo2L2Nu WWWJets WWZNoGstarJets WZJetsTo2L2Q WZJetsTo3LNu WZZNoGstarJets ZZJetsTo2L2Nu ZZJetsTo2L2Q ZZJetsTo4L ZZZNoGstarJets"
-
-#TASKS="ttbarHadronic"
+TASKS="T2bw_x-025_mStop-100to475_mLSP-0to300_LeptonFilter T2bw_x-025_mStop-100to475_mLSP-0to375 T2bw_x-025_mStop-500to650_mLSP-150to300_LeptonFilter T2bw_x-025_mStop-500to80_mLSP-0to700 T2bw_x-050_mStop-100to475_mLSP-0to300_LeptonFilter T2bw_x-050_mStop-100to475_mLSP-0to375 T2bw_x-050_mStop-500to650_mLSP-150to300_LeptonFilter T2bw_x-050_mStop-500to80_mLSP-0to700 T2bw_x-075_mStop-100to475_mLSP-0to300_LeptonFilter T2bw_x-075_mStop-100to475_mLSP-0to375 T2bw_x-075_mStop-500to650_mLSP-150to300_LeptonFilter T2bw_x-075_mStop-500to80_mLSP-0to700 T2tt_mStop-150to350_mLSP-0to250 T2tt_mStop-150to475_mLSP-1 T2tt_mStop-375to475_mLSP-0to375 T2tt_mStop-500to650_mLSP-0to225 T2tt_mStop-500to650_mLSP-250to550 T2tt_mStop-500to800_mLSP-1 T2tt_mStop-675to800_mLSP-0to275 T2tt_mStop-675to800_mLSP-300to700"
 
 for TASK in $TASKS
 do
-    echo " ================================="
-    echo "  Checking status of $TASK ...    "
-    
-    crab -status -c $TASK > status.tmp 2>&1
-
-    MERGEDLIST=""
-    
-    LISTS=`cat status.tmp | grep -v "Exit Code : 0" | grep -b1 "Exit Code :" | grep "List of jobs:" | awk '{print $5}'`
-    for LIST in $LISTS
-    do
-        MERGEDLIST=$LIST,$MERGEDLIST
-    done
-
-    LISTS=`cat status.tmp | grep -b2 "Jobs Aborted" | grep "List of jobs:" | awk '{print $5}'`
-    for LIST in $LISTS
-    do
-        MERGEDLIST=$LIST,$MERGEDLIST
-    done
-
-    LISTS=`cat status.tmp | grep "List of jobs Submitted:" | awk '{print $5}'`
-    for LIST in $LISTS
-    do
-        MERGEDLIST=$LIST,$MERGEDLIST
-    done
-
-    LISTS=`cat status.tmp | grep "List of jobs Scheduled:" | awk '{print $5}'`
-    for LIST in $LISTS
-    do
-        MERGEDLIST=$LIST,$MERGEDLIST
-    done
-
-    if [[ $MERGEDLIST == "" ]]
+    NRESUBMIT=`cat $TASK/status.tmp | grep -E "^[0-9]" | awk '{if ($5 != 0) print}' | grep -v "Submitted\|Scheduled\|Running" | wc -l`
+    if [[ $NRESUBMIT -gt 0 ]]
     then
-        echo "  No job to resubmit        "
+        echo Resubmitting $NRESUBMIT jobs for $TASK ...
+        LIST=`cat $TASK/status.tmp | grep -E "^[0-9]" | awk '{if ($5 != 0) print}' | grep -v "Submitted\|Scheduled\|Running" | awk '{print $1}' | tr '\n' ',' | sed 's/,$//g'`
+        crab -forceResubmit $LIST -c $TASK > log.tmp
+        cat log.tmp | grep "submitted" | tail -n1
+        rm log.tmp
     else
-        #echo "# Will resubmit $MERGEDLIST"
-        NRESUBMITTED=`crab -forceResubmit $MERGEDLIST -c $TASK | grep "Total of" | awk '{print $4}'`
-        echo "  Resubmitted $NRESUBMITTED jobs"
+        echo No job to resubmit for $TASK
     fi
-
-done
     
-echo " ================================="
-rm status.tmp
+done
