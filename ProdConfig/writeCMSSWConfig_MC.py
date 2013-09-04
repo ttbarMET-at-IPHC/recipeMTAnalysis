@@ -289,6 +289,10 @@ process.patJetsCA8CHSpruned.addGenJetMatch = cms.bool(False)
 process.patJetsCA8CHSpruned.addGenPartonMatch = cms.bool(False)
 process.patJetsCA8CHSpruned.embedGenPartonMatch = cms.bool(False)
 
+# Uncomment this for data
+# process.patJetCorrFactorsCA8CHS.levels       = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']
+# process.patJetCorrFactorsCA8CHSpruned.levels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']
+
 process.selectedPatJetsCA8CHSprunedwithNsub = process.selectedPatJetsCA8CHSwithNsub.clone(
     src = cms.InputTag("selectedPatJetsCA8CHSpruned"),
         )
