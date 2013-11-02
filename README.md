@@ -10,13 +10,9 @@ Setup the relevant CMSSW version
     cd CMSSW_5_3_2_patch4/src
     cmsenv 
 
-If you want read-only (you won't be able to commit changes without changing origin in git)
+Clone this repo into your /src/ area
 
     git clone git://github.com/ttbarMET-at-IPHC/recipeMTAnalysis.git ./
-
-If you want read-write (if you have write permissions on this repo)
-
-    git clone git@github.com:ttbarMET-at-IPHC/recipeMTAnalysis ./
     
 Launch the install
     
