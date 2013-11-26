@@ -68,7 +68,7 @@ cvs co -r V00-03-01 -d CMGTools/External UserCode/CMG/CMGTools/External
 cvs co -r HEAD -d ./ExoDiBosonResonances/PATtupleProduction UserCode/ExoDiBosonResonances/PATtupleProduction 
 
 # Quark-gluon tagging
-git clone git@github.com:amarini/QuarkGluonTagger.git
+git clone https://github.com/amarini/QuarkGluonTagger.git
 cd QuarkGluonTagger
 git checkout v1-2-5
 cd ..
